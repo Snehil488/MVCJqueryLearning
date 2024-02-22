@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js" integrity="sha256-xLD7nhI62fcsEZK2/v8LsBcb4lG7dgULkuXoXB/j91c=" crossorigin="anonymous"></script>
+</head>
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Welcome to Learning</p>
+
+    <form>
+        <input type="text" id="stdid1" placeholder="Id" /><br /><br />
+        <input type="text" id="name1" placeholder="Name" /><br /><br />
+        <input type="text" id="email1" placeholder="Email" /><br /><br />
+        <br />
+        <input type="button" onclick="SendDataClick()" value="Send Data" />
+    </form>
+
+    <hr />
+
+    <div>
+        <span>Id</span> : <span id="stdid"></span><br />
+        <span>Name</span> : <span id="name"></span><br />
+        <span>Email</span> : <span id="email"></span><br />
+    </div>
+    <br />
+    <button type="button" id="btn" value="Click Me">Click Me</button>
+
+    <hr />
+
+    <br>
+    <small>this is for autocomplete suggestions</small>
+    <input type="text" onchange="Boom()" id="txtBox" placeholder="start typing.." />
+</div>
+
+<script>
+    function BtnClick() {
+        $("#lbl").text("I am added by jquery");
+    };
+
+    $("#btn").on('click', function () {
+        $.ajax({
+            url:"/Home/GetStudent",
+            method: "GET",
+            success: function (data) {
+                console.log(data);
+
+                //converts json in javascript object
+                data = JSON.parse(data);
+
+                console.log(data);
+
+                $("#stdid").text(data.Id);
+                $("#name").text(data.Name);
+                $("#email").text(data.Email);
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        });
+    });
+
+    //post goes here
+
+    function SendDataClick(){
+        var id = $("#stdid1").val();
+        var name = $("#name1").val();
+        var email = $("#email1").val();
+
+        var obj = {
+            Id : id,
+            Name : name,
+            Email : email
+        }
+
+        SubmitForm(obj);
+    }
+
+    function SubmitForm(obj) {
+
+        $.ajax({
+            url: "/Home/AddStudent",
+            method: "POST",
+            data : obj ,
+            success: function (data) {
+
+                alert(data);
+                console.log(data);
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        });
+
+    }
+
+    $("#txtBox").autocomplete({
+        source: "/Home/Search",
+        minLength: 1
+    });
+
+</script>
